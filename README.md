@@ -2,7 +2,7 @@
 
 ## Overview
 
-The mobile applications for the CSE 4471 project.
+The mobile application for the CSE 4471 project.
 
 ## Setup
 
