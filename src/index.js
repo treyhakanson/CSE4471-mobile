@@ -1,26 +1,19 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { StackNavigator } from "react-navigation";
 
-import { colors } from "./constants";
+import Home from "./Home";
+import Speech from "./Speech";
+import Success from "./Success";
 
-export default class App extends Component {
-   render() {
-      return (
-         <View style={styles.container}>
-            <Text style={styles.text}>The Application is Working.</Text>
-         </View>
-      );
-   }
-}
-
-const styles = StyleSheet.create({
-   container: {
-      flex: 1,
-      backgroundColor: colors.white,
-      alignItems: "center",
-      justifyContent: "center"
+export default StackNavigator({
+   Home: {
+      screen: Home
    },
-   text: {
-      color: colors.text.default
+   Speech: {
+      screen: Speech
+   },
+   Success: {
+      screen: Success
    }
 });

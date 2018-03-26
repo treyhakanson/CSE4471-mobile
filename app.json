@@ -1,5 +1,7 @@
 {
-  "expo": {
-    "sdkVersion": "25.0.0"
-  }
+   "expo": {
+      "name": "CSE4471 Project",
+      "orientation": "portrait",
+      "sdkVersion": "25.0.0"
+   }
 }

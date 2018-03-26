@@ -2,6 +2,10 @@ const colors = {
    white: "rgb(255, 255, 255)",
    black: "rgba(10, 10, 10, 0.95)",
 
+   danger: "rgb(235, 58, 34)",
+   warning: "rgb(251, 213, 11)",
+   success: "rgb(49, 170, 70)",
+
    primary: {
       default: "rgb(93, 154, 235)",
       dark: "rgb(50, 106, 181)",
