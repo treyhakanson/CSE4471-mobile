@@ -5,7 +5,7 @@ import { StackNavigator } from "react-navigation";
 import { navStyles } from "./constants";
 import Home from "./Home";
 import Speech from "./Speech";
-import Success from "./Success";
+import Complete from "./Complete";
 
 export default StackNavigator(
    {
@@ -15,8 +15,8 @@ export default StackNavigator(
       Speech: {
          screen: Speech
       },
-      Success: {
-         screen: Success
+      Complete: {
+         screen: Complete
       }
    },
    {

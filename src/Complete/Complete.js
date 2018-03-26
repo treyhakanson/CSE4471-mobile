@@ -6,7 +6,7 @@ import FIcon from "react-native-vector-icons/Foundation";
 
 import { colors, navStyles } from "../constants";
 
-export default class Success extends Component {
+export default class Complete extends Component {
    static navigationOptions = {
       title: "Passphrase Received"
    };
