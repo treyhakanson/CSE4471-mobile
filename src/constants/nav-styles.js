@@ -1,6 +1,11 @@
 import colors from "./colors";
 
 const navStyles = {
+   // dimensions
+   buttonMargin: 12,
+   buttonSize: 24,
+
+   // full styles
    primary: {
       headerStyle: {
          backgroundColor: colors.primary.default,

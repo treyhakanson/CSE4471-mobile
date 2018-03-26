@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { StyleSheet, View, StatusBar, Text } from "react-native";
+import { StyleSheet, View, StatusBar, TouchableOpacity } from "react-native";
+import Icon from "react-native-vector-icons/Entypo";
 
-import { navStyles } from "../constants";
+import { colors, navStyles } from "../constants";
 import SiteList from "./SiteList";
 
 const fakeData = [
@@ -11,17 +12,41 @@ const fakeData = [
    { key: "c", title: "Sample App" }
 ];
 
+const AddSiteButton = () => (
+   <TouchableOpacity style={{ marginRight: navStyles.buttonMargin }}>
+      <Icon
+         name="circle-with-plus"
+         color={colors.white}
+         size={navStyles.buttonSize}
+      />
+   </TouchableOpacity>
+);
+
 export default class HomeScreen extends Component {
-   static navigationOptions = {
-      ...navStyles.primary,
-      title: "Home"
+   static navigationOptions = ({ navigation, navigationOptions }) => {
+      return {
+         title: "Home",
+         headerRight: <AddSiteButton />
+      };
+   };
+
+   _onSpeak = item => {
+      this.props.navigation.navigate("Speech", { ...item });
+   };
+
+   _onCancel = item => {
+      // TODO: update status with call to API
    };
 
    render() {
       return (
          <View style={styles.HS}>
             <StatusBar barStyle="light-content" />
-            <SiteList data={fakeData} />
+            <SiteList
+               data={fakeData}
+               onSpeak={this._onSpeak}
+               onCancel={this._onCancel}
+            />
          </View>
       );
    }

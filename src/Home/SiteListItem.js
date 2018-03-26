@@ -5,34 +5,42 @@ import moment from "moment";
 import EIcon from "react-native-vector-icons/Entypo";
 import FIcon from "react-native-vector-icons/Foundation";
 
-import { colors } from "../constants";
-
-const ACTIONS = {
-   SPEAK: Symbol("ACTIONS/SPEAK"),
-   CANCEL: Symbol("ACTIONS/CANCEL")
-};
+import { colors, SiteType } from "../constants";
 
 export default class SiteListItem extends Component {
    static propTypes = {
       onPress: PropTypes.func.isRequired,
-      title: PropTypes.string.isRequired,
-      actionDate: PropTypes.instanceOf(moment)
+      onSpeak: PropTypes.func.isRequired,
+      onCancel: PropTypes.func.isRequired,
+      item: SiteType.isRequired
    };
 
    static defaultProps = {
-      onPress: () => {}
+      onPress: () => {},
+      onSpeak: () => {},
+      onCancel: () => {}
    };
 
-   _onPress = action => {
-      this.props.onPress(action);
+   _onPress = () => {
+      this.props.onPress(this.props.item);
+   };
+
+   _onSpeak = () => {
+      this.props.onSpeak(this.props.item);
+   };
+
+   _onCancel = () => {
+      this.props.onCancel(this.props.item);
    };
 
    render() {
+      const { item } = this.props;
+
       return (
-         <TouchableOpacity style={styles.SLI}>
+         <TouchableOpacity style={styles.SLI} onPress={this._onPress}>
             <View style={styles.SLI__Info}>
-               <Text style={styles.SLI__TitleText}>{this.props.title}</Text>
-               {this.props.actionDate && (
+               <Text style={styles.SLI__TitleText}>{item.title}</Text>
+               {item.actionDate && (
                   <View style={styles.SLI__InfoAction}>
                      <EIcon name="warning" color={colors.warning} size={14} />
                      <View style={styles.SLI__InfoActionText}>
@@ -40,20 +48,20 @@ export default class SiteListItem extends Component {
                            Action Requested
                         </Text>
                         <Text style={styles.InfoAction__Sub}>
-                           {this.props.actionDate.format("MM/DD - h:mma")}
+                           {item.actionDate.format("MM/DD - h:mma")}
                         </Text>
                      </View>
                   </View>
                )}
             </View>
-            {this.props.actionDate && (
+            {item.actionDate && (
                <View style={styles.SLI__Action}>
                   <TouchableOpacity
                      style={[
                         styles.SLI__ActionButton,
                         styles.ActionButtonSpeak
                      ]}
-                     onPress={() => this._onPress(ACTIONS.SPEAK)}
+                     onPress={this._onSpeak}
                   >
                      <EIcon name="mic" color={colors.white} size={18} />
                   </TouchableOpacity>
@@ -62,7 +70,7 @@ export default class SiteListItem extends Component {
                         styles.SLI__ActionButton,
                         styles.ActionButtonCancel
                      ]}
-                     onPress={() => this._onPress(ACTIONS.CANCEL)}
+                     onPress={this._onCancel}
                   >
                      <FIcon name="x" color={colors.white} size={18} />
                   </TouchableOpacity>

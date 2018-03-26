@@ -1,24 +1,94 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import EIcon from "react-native-vector-icons/Entypo";
+import FIcon from "react-native-vector-icons/Foundation";
 
-import navStyles from "../constants/nav-styles";
+import { colors, navStyles } from "../constants";
 
 export default class Success extends Component {
    static navigationOptions = {
-      ...navStyles.primary,
-      title: "Home"
+      title: "Passphrase Received"
    };
 
    render() {
+      let { params: { success = false } = {} } = this.props.navigation.state;
+      let Icon;
+      let iconStyle;
+      let text;
+      let iconProps = {
+         color: colors.white,
+         size: 32
+      };
+
+      if (success) {
+         Icon = EIcon;
+         iconProps.name = "check";
+         iconStyle = styles.SuccessIcon;
+         text =
+            "Passphrase successfully validated, you are now\nfully authenticated.";
+      } else {
+         Icon = FIcon;
+         iconProps.name = "x";
+         iconStyle = styles.FailureIcon;
+         text = "Unable to validate passphrase.\nPlease try again.";
+      }
+
       return (
          <View style={styles.S}>
-            <Text>Success Screen</Text>
+            <View style={[styles.S__Icon, iconStyle]}>
+               <Icon {...iconProps} />
+            </View>
+            <Text style={styles.S__Text}>{text}</Text>
+            <TouchableOpacity
+               style={styles.S__HomeButton}
+               onPress={() => this.props.navigation.goBack(null)}
+            >
+               <Text style={styles.S__HomeButtonText}>HOME</Text>
+            </TouchableOpacity>
          </View>
       );
    }
 }
 
 const styles = StyleSheet.create({
-   S: {}
+   S: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 35
+   },
+
+   S__Icon: {
+      height: 100,
+      width: 100,
+      borderRadius: 50,
+      alignItems: "center",
+      justifyContent: "center"
+   },
+   SuccessIcon: {
+      backgroundColor: colors.success
+   },
+   FailureIcon: {
+      backgroundColor: colors.danger
+   },
+
+   S__Text: {
+      fontSize: 16,
+      marginTop: 20,
+      textAlign: "center"
+   },
+
+   S__HomeButton: {
+      backgroundColor: colors.primary.default,
+      paddingVertical: 10,
+      alignSelf: "stretch",
+      marginTop: 20
+   },
+   S__HomeButtonText: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: colors.white,
+      textAlign: "center"
+   }
 });

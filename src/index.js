@@ -2,18 +2,27 @@ import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
 import { StackNavigator } from "react-navigation";
 
+import { navStyles } from "./constants";
 import Home from "./Home";
 import Speech from "./Speech";
 import Success from "./Success";
 
-export default StackNavigator({
-   Home: {
-      screen: Home
+export default StackNavigator(
+   {
+      Home: {
+         screen: Home
+      },
+      Speech: {
+         screen: Speech
+      },
+      Success: {
+         screen: Success
+      }
    },
-   Speech: {
-      screen: Speech
-   },
-   Success: {
-      screen: Success
+   {
+      initialRouteName: "Home",
+      navigationOptions: {
+         ...navStyles.primary
+      }
    }
-});
+);
