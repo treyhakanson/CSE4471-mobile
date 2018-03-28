@@ -6,10 +6,12 @@ import Icon from "react-native-vector-icons/Entypo";
 import { colors, navStyles } from "../constants";
 import SiteList from "./SiteList";
 
+// TODO: this should be in redux so that it can be updated from the Complete
+// screen
 const fakeData = [
-   { key: "a", title: "Sample App", actionDate: require("moment")() },
-   { key: "b", title: "Sample App" },
-   { key: "c", title: "Sample App" }
+   { key: "a", title: "Sample App 1", actionDate: require("moment")() },
+   { key: "b", title: "Sample App 2" },
+   { key: "c", title: "Sample App 3" }
 ];
 
 const AddSiteButton = () => (
@@ -43,6 +45,10 @@ export default class HomeScreen extends Component {
 
    _onCancel = item => {
       // TODO: update status with call to API
+      // TODO: should be a redux update
+      let data = [...this.state.data];
+      delete data.find(x => x.key === item.key).actionDate;
+      this.setState({ data });
    };
 
    render() {
@@ -50,7 +56,7 @@ export default class HomeScreen extends Component {
          <View style={styles.HS}>
             <StatusBar barStyle="light-content" />
             <SiteList
-               data={this.state.fakeData}
+               data={this.state.data}
                onSpeak={this._onSpeak}
                onCancel={this._onCancel}
             />
