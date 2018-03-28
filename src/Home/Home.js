@@ -30,6 +30,13 @@ export default class HomeScreen extends Component {
       };
    };
 
+   constructor(props) {
+      super(props);
+      this.state = {
+         data: [...fakeData]
+      };
+   }
+
    _onSpeak = item => {
       this.props.navigation.navigate("Speech", { ...item });
    };
@@ -43,7 +50,7 @@ export default class HomeScreen extends Component {
          <View style={styles.HS}>
             <StatusBar barStyle="light-content" />
             <SiteList
-               data={fakeData}
+               data={this.state.fakeData}
                onSpeak={this._onSpeak}
                onCancel={this._onCancel}
             />
