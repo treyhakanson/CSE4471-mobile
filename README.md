@@ -2,7 +2,11 @@
 
 ## Overview
 
-The mobile application for the CSE 4471 project.
+The mobile application for the CSE 4471 project. The most recent publish of the Expo application can be found here:
+
+[https://exp.host/@treyhakanson/cse4471-project](https://exp.host/@treyhakanson/cse4471-project)
+
+The above will be updated periodically, but the link will not change.
 
 ## Setup
 
