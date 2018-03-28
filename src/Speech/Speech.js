@@ -52,6 +52,7 @@ export default class Speech extends Component {
       const info = await audioManager.end();
       // TODO: actually send this audio up to the API before sending to the
       // complete screen, and mark this notification as handled, if successful
+      // (in redux)
       console.log("AUDIO RECORDED:", info);
       this.props.navigation.navigate("Complete", { success: true });
       this.setState({ playing: false });
