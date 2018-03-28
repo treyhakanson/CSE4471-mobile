@@ -1,6 +1,7 @@
 {
    "expo": {
       "name": "CSE4471 Project",
+      "icon": "./icon.png",
       "orientation": "portrait",
       "sdkVersion": "25.0.0"
    }

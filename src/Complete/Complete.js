@@ -26,7 +26,7 @@ export default class Complete extends Component {
          iconProps.name = "check";
          iconStyle = styles.SuccessIcon;
          text =
-            "Passphrase successfully validated, you are now\nfully authenticated.";
+            "Passphrase successfully validated, you\nare now fully authenticated.";
       } else {
          Icon = FIcon;
          iconProps.name = "x";
@@ -42,7 +42,11 @@ export default class Complete extends Component {
             <Text style={styles.S__Text}>{text}</Text>
             <TouchableOpacity
                style={styles.S__HomeButton}
-               onPress={() => this.props.navigation.goBack(null)}
+               onPress={() => {
+                  // FIXME: how to go back to home here, instead of just back
+                  // 1? (can't just call the following method twice in a row)
+                  this.props.navigation.goBack();
+               }}
             >
                <Text style={styles.S__HomeButtonText}>HOME</Text>
             </TouchableOpacity>
@@ -56,7 +60,8 @@ const styles = StyleSheet.create({
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      paddingHorizontal: 35
+      paddingHorizontal: 35,
+      backgroundColor: colors.white
    },
 
    S__Icon: {
