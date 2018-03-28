@@ -8,6 +8,12 @@ The mobile application for the CSE 4471 project. The most recent publish of the 
 
 The above will be updated periodically, but the link will not change.
 
+To see the line count for the project (that of the `src` folder), run the following command:
+
+```sh
+bash ./line-count.sh
+```
+
 ## Setup
 
 Prerequisites:
