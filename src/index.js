@@ -1,13 +1,15 @@
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
+import { Provider } from "react-redux";
 import { StackNavigator } from "react-navigation";
 
 import { navStyles } from "./constants";
 import Home from "./Home";
 import Speech from "./Speech";
 import Complete from "./Complete";
+import store from "./ducks";
 
-export default StackNavigator(
+const Navigator = StackNavigator(
    {
       Home: {
          screen: Home
@@ -26,3 +28,11 @@ export default StackNavigator(
       }
    }
 );
+
+const ApplicationWrapper = () => (
+   <Provider store={store}>
+      <Navigator />
+   </Provider>
+);
+
+export default ApplicationWrapper;
