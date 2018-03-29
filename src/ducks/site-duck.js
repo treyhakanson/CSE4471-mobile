@@ -1,11 +1,7 @@
 // initial state
 const INITIAL_STATE = {
    // TODO: remove temporary fake data; replace with []
-   data: [
-      { key: "a", title: "Sample App 1", actionDate: require("moment")() },
-      { key: "b", title: "Sample App 2" },
-      { key: "c", title: "Sample App 3" }
-   ]
+   data: [{ key: "a", title: "Sample App 1", actionDate: require("moment")() }]
 };
 
 // actions

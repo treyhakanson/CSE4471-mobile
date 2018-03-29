@@ -4,13 +4,17 @@ import { Provider } from "react-redux";
 import { StackNavigator } from "react-navigation";
 
 import { navStyles } from "./constants";
+import store from "./ducks";
+import Login from "./Auth";
 import Home from "./Home";
 import Speech from "./Speech";
 import Complete from "./Complete";
-import store from "./ducks";
 
 const Navigator = StackNavigator(
    {
+      Login: {
+         screen: Login
+      },
       Home: {
          screen: Home
       },
