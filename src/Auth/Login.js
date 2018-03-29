@@ -1,3 +1,7 @@
+/*
+ TODO: Is this even needed? Or should this be kept track of on a per device
+ basis, and thus logging in is done by device IP?
+ */
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import {
