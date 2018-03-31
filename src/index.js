@@ -26,7 +26,7 @@ const Navigator = StackNavigator(
       }
    },
    {
-      initialRouteName: "Home",
+      initialRouteName: "Login",
       navigationOptions: {
          ...navStyles.primary
       }

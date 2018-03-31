@@ -22,6 +22,7 @@ class HomeScreen extends Component {
    static navigationOptions = ({ navigation, navigationOptions }) => {
       return {
          title: "Home",
+         headerLeft: null,
          headerRight: <AddSiteButton />
       };
    };

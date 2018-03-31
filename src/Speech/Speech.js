@@ -64,6 +64,11 @@ export default class Speech extends Component {
             <TouchableOpacity style={styles.S__Mic} onPress={this._toggleAudio}>
                <Icon name="mic" color={colors.white} size={32} />
             </TouchableOpacity>
+            <Text style={styles.S__Text}>
+               {this.state.playing
+                  ? "Tap the microphone again to finish speaking."
+                  : "Tap the microphone to begin speaking."}
+            </Text>
          </View>
       );
    }
@@ -83,5 +88,10 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: colors.accent.default
+   },
+   S__Text: {
+      fontSize: 16,
+      marginTop: 20,
+      textAlign: "center"
    }
 });

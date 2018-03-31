@@ -16,6 +16,10 @@ import Icon from "react-native-vector-icons/Entypo";
 import { colors } from "../constants";
 
 export default class Login extends Component {
+   static navigationOptions = {
+      header: null
+   };
+
    constructor(props) {
       super(props);
       this.state = {
@@ -27,6 +31,8 @@ export default class Login extends Component {
    _handleSubmit = () => {
       const { username, password } = this.state;
       console.log("Submiting form with values:", username, password);
+      // TODO: actually login before sending to home screen
+      this.props.navigation.navigate("Home");
    };
 
    _onChangeText = (text, key) => {

@@ -8,7 +8,8 @@ import { colors, navStyles } from "../constants";
 
 export default class Complete extends Component {
    static navigationOptions = {
-      title: "Passphrase Received"
+      title: "Complete",
+      headerLeft: null
    };
 
    render() {
@@ -43,9 +44,7 @@ export default class Complete extends Component {
             <TouchableOpacity
                style={styles.S__HomeButton}
                onPress={() => {
-                  // FIXME: how to go back to home here, instead of just back
-                  // 1? (can't just call the following method twice in a row)
-                  this.props.navigation.goBack();
+                  this.props.navigation.navigate("Home");
                }}
             >
                <Text style={styles.S__HomeButtonText}>HOME</Text>
