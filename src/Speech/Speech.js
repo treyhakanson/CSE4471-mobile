@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Entypo";
 
-import { colors, navStyles } from "../constants";
+import { colors, navStyles, SiteType } from "../constants";
+import { site } from "../ducks";
 import AudioManager from "./audio-setup";
 
 const audioManager = new AudioManager();
@@ -21,7 +23,17 @@ const BackButton = ({ onPress }) => (
    </TouchableOpacity>
 );
 
-export default class Speech extends Component {
+class Speech extends Component {
+   static propTypes = {
+      navigation: PropTypes.shape({
+         state: PropTypes.shape({
+            params: PropTypes.shape({
+               site: SiteType.isRequired
+            }).isRequired
+         }).isRequired
+      }).isRequired
+   };
+
    static navigationOptions = ({ navigation, navigationOptions }) => {
       return {
          title: "Speak Passphrase",
@@ -49,11 +61,12 @@ export default class Speech extends Component {
          this.setState({ playing: true });
          return;
       }
-      const info = await audioManager.end();
       // TODO: actually send this audio up to the API before sending to the
-      // complete screen, and mark this notification as handled, if successful
-      // (in redux)
-      console.log("AUDIO RECORDED:", info);
+      // complete screen, and mark this notification as handled based on result
+      const info = await audioManager.end();
+      let updatedSite = { ...this.props.navigation.state.params.site };
+      delete updatedSite.actionDate;
+      this.props.updateOneSite(updatedSite);
       this.props.navigation.navigate("Complete", { success: true });
       this.setState({ playing: false });
    };
@@ -73,6 +86,10 @@ export default class Speech extends Component {
       );
    }
 }
+
+export default connect(null, {
+   updateOneSite: site.updateOne
+})(Speech);
 
 const styles = StyleSheet.create({
    S: {

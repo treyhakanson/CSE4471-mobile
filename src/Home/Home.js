@@ -22,20 +22,20 @@ class HomeScreen extends Component {
    static navigationOptions = ({ navigation, navigationOptions }) => {
       return {
          title: "Home",
-         headerLeft: null,
-         headerRight: <AddSiteButton />
+         headerLeft: null
+         // headerRight: <AddSiteButton />
       };
    };
 
-   _onSpeak = item => {
-      this.props.navigation.navigate("Speech", { ...item });
+   _onSpeak = site => {
+      this.props.navigation.navigate("Speech", { site });
    };
 
-   _onCancel = item => {
+   _onCancel = site => {
       // TODO: update status with call to API
-      let updatedItem = { ...item };
-      delete updatedItem.actionDate;
-      this.props.updateOneSite(updatedItem);
+      let updatedSite = { ...site };
+      delete updatedSite.actionDate;
+      this.props.updateOneSite(updatedSite);
    };
 
    render() {
@@ -52,16 +52,15 @@ class HomeScreen extends Component {
    }
 }
 
-export default connect(
-   state => {
-      return {
-         data: state.site.data
-      };
-   },
-   {
-      updateOneSite: site.updateOne
-   }
-)(HomeScreen);
+function mapStateToProps(state) {
+   return {
+      data: state.site.data
+   };
+}
+
+export default connect(mapStateToProps, {
+   updateOneSite: site.updateOne
+})(HomeScreen);
 
 const styles = StyleSheet.create({
    HS: {
