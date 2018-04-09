@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { StyleSheet, View, StatusBar, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Entypo";
 
+import { registerForPushNotificationsAsync } from "../Notifications";
 import { colors, navStyles } from "../constants";
 import { site } from "../ducks";
 import SiteList from "./SiteList";
@@ -26,6 +27,11 @@ class HomeScreen extends Component {
          // headerRight: <AddSiteButton />
       };
    };
+
+   async componentWillMount() {
+      let token = await registerForPushNotificationsAsync();
+      console.log("TOKEN:", token);
+   }
 
    _onSpeak = site => {
       this.props.navigation.navigate("Speech", { site });
