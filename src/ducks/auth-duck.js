@@ -33,14 +33,25 @@ export default function(state = INITIAL_STATE, action = {}) {
 export function login(username, password) {
    return function(dispatch) {
       axios
-         .get(api.buildURL("login"), {
-            params: {
-               username,
-               password
+         .post(api.buildURL("login"), {
+            email: username,
+            password
+         })
+         .then(res => {
+            if (res.data.outcome === "successful") {
+               console.log("LOGIN SUCCESSFUL.");
+               dispatch(handleLogin(res.data.token));
+            } else {
+               let msg = "Please check your username and password.";
+               console.log("LOGIN ERROR OCCURRED:", msg);
+               dispatch(handleLogin(null, msg));
             }
          })
-         .then(res => dispatch(handleLogin(res.data.token)))
-         .catch(err => dispatch(handleLogin(null, err)));
+         .catch(err => {
+            let msg = "Something went wrong, please try again later.";
+            console.log("LOGIN ERROR OCCURRED:", msg);
+            dispatch(handleLogin(null, msg));
+         });
    };
 }
 

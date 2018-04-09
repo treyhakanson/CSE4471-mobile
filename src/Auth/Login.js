@@ -96,7 +96,7 @@ class Login extends Component {
                {this.state.status === STATUS.ERROR && (
                   <View style={styles.ErrorBlock}>
                      <Text style={styles.ErrorText}>
-                        An error occurred. Please try again.
+                        {this.props.auth.error}
                      </Text>
                   </View>
                )}
