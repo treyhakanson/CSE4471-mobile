@@ -7,28 +7,38 @@ import {
    TouchableOpacity,
    TextInput
 } from "react-native";
+import { connect } from "react-redux";
 import Icon from "react-native-vector-icons/Entypo";
 
-import { colors } from "../constants";
+import { colors, api, STATUS } from "../constants";
+import { auth } from "../ducks";
 
-export default class Login extends Component {
+class Login extends Component {
    static navigationOptions = {
       header: null
    };
+
+   componentWillReceiveProps(nextProps) {
+      if (nextProps.auth.error) {
+         this.setState({ status: STATUS.ERROR });
+      } else if (nextProps.auth.token) {
+         this.props.navigation.navigate("Home");
+      }
+   }
 
    constructor(props) {
       super(props);
       this.state = {
          username: "",
-         password: ""
+         password: "",
+         status: STATUS.IDLE
       };
    }
 
    _handleSubmit = () => {
       const { username, password } = this.state;
-      console.log("Submiting form with values:", username, password);
-      // TODO: actually login before sending to home screen
-      this.props.navigation.navigate("Home");
+      this.setState({ status: STATUS.BUSY });
+      this.props.login(username, password);
    };
 
    _onChangeText = (text, key) => {
@@ -49,6 +59,8 @@ export default class Login extends Component {
                         color={colors.grey.medium}
                      />
                      <TextInput
+                        autoCapitalize="none"
+                        autoCorrect={false}
                         style={styles.TextInput}
                         value={this.state.username}
                         placeholder="Username"
@@ -81,11 +93,28 @@ export default class Login extends Component {
                >
                   <Text style={styles.SubmitButtonText}>Submit</Text>
                </TouchableOpacity>
+               {this.state.status === STATUS.ERROR && (
+                  <View style={styles.ErrorBlock}>
+                     <Text style={styles.ErrorText}>
+                        An error occurred. Please try again.
+                     </Text>
+                  </View>
+               )}
             </View>
          </View>
       );
    }
 }
+
+function mapStateToProps(state) {
+   return {
+      auth: state.auth
+   };
+}
+
+export default connect(mapStateToProps, {
+   login: auth.login
+})(Login);
 
 const styles = StyleSheet.create({
    L: {
@@ -107,7 +136,8 @@ const styles = StyleSheet.create({
    },
    Content: {
       alignSelf: "stretch",
-      marginVertical: 15
+      marginTop: 15,
+      marginBottom: 10
    },
    TextInputWrapper: {
       flexDirection: "row",
@@ -132,5 +162,15 @@ const styles = StyleSheet.create({
       color: colors.white,
       textAlign: "center",
       fontSize: 14
+   },
+   ErrorBlock: {
+      backgroundColor: colors.danger,
+      marginTop: 10,
+      alignSelf: "stretch"
+   },
+   ErrorText: {
+      color: colors.white,
+      paddingVertical: 10,
+      textAlign: "center"
    }
 });
