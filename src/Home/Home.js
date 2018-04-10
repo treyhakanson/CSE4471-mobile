@@ -30,7 +30,7 @@ class HomeScreen extends Component {
 
    async componentWillMount() {
       let token = await registerForPushNotificationsAsync();
-      console.log("TOKEN:", token);
+      // TODO: send this token to the API server
    }
 
    _onSpeak = site => {

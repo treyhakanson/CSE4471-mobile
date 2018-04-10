@@ -2,9 +2,11 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import Icon from "react-native-vector-icons/Entypo";
+import EIcon from "react-native-vector-icons/Entypo";
+import FIcon from "react-native-vector-icons/Foundation";
+import axios from "axios";
 
-import { colors, navStyles, SiteType } from "../constants";
+import { api, colors, navStyles, SiteType, STATUS } from "../constants";
 import { site } from "../ducks";
 import AudioManager from "./audio-setup";
 
@@ -15,7 +17,7 @@ const BackButton = ({ onPress }) => (
       style={{ marginLeft: navStyles.buttonMargin }}
       onPress={onPress}
    >
-      <Icon
+      <EIcon
          name="chevron-left"
          color={colors.white}
          size={navStyles.buttonSize}
@@ -48,7 +50,8 @@ class Speech extends Component {
    constructor(props) {
       super(props);
       this.state = {
-         playing: false
+         playing: false,
+         status: STATUS.IDLE
       };
    }
 
@@ -62,32 +65,103 @@ class Speech extends Component {
          return;
       }
       // TODO: actually send this audio up to the API before sending to the
-      // complete screen, and mark this notification as handled based on result
+      // complete screen
+      this.setState({ status: STATUS.BUSY });
       const info = await audioManager.end();
-      let updatedSite = { ...this.props.navigation.state.params.site };
-      delete updatedSite.actionDate;
-      this.props.updateOneSite(updatedSite);
-      this.props.navigation.navigate("Complete", { success: true });
-      this.setState({ playing: false });
+      const success = await this._handleAudioUpload(info);
+      if (success) {
+         this.setState({ status: STATUS.SUCCESS, playing: false });
+         let updatedSite = { ...this.props.navigation.state.params.site };
+         delete updatedSite.actionDate;
+         this.props.updateOneSite(updatedSite);
+         this.props.navigation.navigate("Complete", { success: true });
+      } else {
+         this.setState({ status: STATUS.ERROR, playing: false });
+      }
    };
 
+   _getInfoText() {
+      const { playing, status } = this.state;
+      if (playing) {
+         return "Tap the microphone again to finish speaking.";
+      }
+      switch (status) {
+         case STATUS.BUSY:
+            return "Tap the microphone to begin speaking.";
+         case STATUS.ERROR:
+            return "An error occurred. Please try again later.";
+         default:
+            return "Uploading passphrase for analysis...";
+      }
+   }
+
+   async _handleAudioUpload(info) {
+      let formData = new FormData();
+      const audioFile = {
+         uri: info.uri,
+         name: "audio.caf",
+         type: "audio/x-caf"
+      };
+      formData.append("token", this.props.auth.token);
+      formData.append("file", audioFile);
+      let res = await axios({
+         url: api.buildURL("submit-phrase-audio"),
+         method: "POST",
+         data: formData,
+         headers: {
+            Accept: "application/json",
+            "Content-Type": "multipart/form-data"
+         }
+      }).catch(err => {
+         this.setState({ status: STATUS.ERROR });
+      });
+      res = res || {};
+      return res.data && res.data.outcome === "successful";
+   }
+
    render() {
+      let iconName;
+      let iconStyles = [styles.S__Icon];
+      let iconOnPress;
+      let IconComponent;
+
+      switch (this.state.status) {
+         case STATUS.BUSY:
+            IconComponent = EIcon;
+            iconName = "upload-to-cloud";
+            iconStyles.push(styles.S__BusyIcon);
+            break;
+         case STATUS.ERROR:
+            IconComponent = FIcon;
+            iconName = "x";
+            iconStyles.push(styles.S__ErrorIcon);
+            break;
+         default:
+            IconComponent = EIcon;
+            iconName = "mic";
+            iconStyles.push(styles.S__MicIcon);
+            iconOnPress = this._toggleAudio;
+            break;
+      }
+
       return (
          <View style={styles.S}>
-            <TouchableOpacity style={styles.S__Mic} onPress={this._toggleAudio}>
-               <Icon name="mic" color={colors.white} size={32} />
+            <TouchableOpacity style={iconStyles} onPress={iconOnPress}>
+               <IconComponent name={iconName} color={colors.white} size={32} />
             </TouchableOpacity>
-            <Text style={styles.S__Text}>
-               {this.state.playing
-                  ? "Tap the microphone again to finish speaking."
-                  : "Tap the microphone to begin speaking."}
-            </Text>
+            <Text style={styles.S__Text}>{this._getInfoText()}</Text>
          </View>
       );
    }
 }
 
-export default connect(null, {
+function mapStateToProps(state) {
+   return {
+      auth: state.auth
+   };
+}
+
+export default connect(mapStateToProps, {
    updateOneSite: site.updateOne
 })(Speech);
 
@@ -98,13 +172,21 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       backgroundColor: colors.white
    },
-   S__Mic: {
+   S__Icon: {
       height: 100,
       width: 100,
       borderRadius: 50,
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "center"
+   },
+   S__MicIcon: {
       backgroundColor: colors.accent.default
+   },
+   S__BusyIcon: {
+      backgroundColor: colors.grey.medium
+   },
+   S__ErrorIcon: {
+      backgroundColor: colors.danger
    },
    S__Text: {
       fontSize: 16,
