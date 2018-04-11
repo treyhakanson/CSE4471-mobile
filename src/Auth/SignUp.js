@@ -10,7 +10,13 @@ import {
 import { connect } from "react-redux";
 import Icon from "react-native-vector-icons/Entypo";
 
-import { colors, api, STATUS, COMMON_PASSWORDS } from "../constants";
+import {
+   colors,
+   api,
+   STATUS,
+   commonPasswords,
+   validations
+} from "../constants";
 import { auth } from "../ducks";
 
 const Segment = props => {
@@ -53,9 +59,12 @@ class SignUp extends Component {
       let state = { [key]: text };
       if (key === "password") {
          state.passwordInfo = this._evaluateStrength(text);
-         state.ready = state.passwordInfo.score >= 3 && !!this.state.username;
+         state.ready =
+            state.passwordInfo.score >= 3 &&
+            validations.email(this.state.username);
       } else {
-         state.ready = this.state.passwordInfo.score >= 3 && !!text;
+         state.ready =
+            this.state.passwordInfo.score >= 3 && validations.email(text);
       }
       this.setState(state);
    };
@@ -64,7 +73,7 @@ class SignUp extends Component {
       let info = { score: 0 };
       let needs = [];
 
-      if (COMMON_PASSWORDS.has(password)) {
+      if (commonPasswords.has(password)) {
          info.score = 0;
          info.text = "Weak Sauce";
          info.message = "Your password is too common, please be more creative.";
@@ -163,7 +172,7 @@ class SignUp extends Component {
                         autoCorrect={false}
                         style={styles.TextInput}
                         value={this.state.username}
-                        placeholder="Username"
+                        placeholder="Email"
                         underlineColorAndroid="rgba(0,0,0,0)"
                         tintColor={colors.primary.default}
                         selectionColor={colors.primary.faded}

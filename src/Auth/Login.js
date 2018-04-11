@@ -10,7 +10,7 @@ import {
 import { connect } from "react-redux";
 import Icon from "react-native-vector-icons/Entypo";
 
-import { colors, api, STATUS } from "../constants";
+import { colors, api, STATUS, validations } from "../constants";
 import { auth } from "../ducks";
 
 class Login extends Component {
@@ -45,8 +45,8 @@ class Login extends Component {
    _onChangeText = (text, key) => {
       const ready =
          key === "password"
-            ? this.state.username && text
-            : this.state.password && text;
+            ? validations.email(this.state.username) && text
+            : this.state.password && validations.email(text);
       this.setState({ [key]: text, ready });
    };
 
@@ -68,7 +68,7 @@ class Login extends Component {
                         autoCorrect={false}
                         style={styles.TextInput}
                         value={this.state.username}
-                        placeholder="Username"
+                        placeholder="Email"
                         underlineColorAndroid="rgba(0,0,0,0)"
                         tintColor={colors.primary.default}
                         selectionColor={colors.primary.faded}

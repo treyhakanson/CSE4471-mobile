@@ -1,4 +1,4 @@
-export const COMMON_PASSWORDS = new Set([
+export const commonPasswords = new Set([
    "password",
    "123456",
    "12345678",
