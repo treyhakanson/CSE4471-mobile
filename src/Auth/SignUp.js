@@ -18,6 +18,7 @@ import {
    validations
 } from "../constants";
 import { auth } from "../ducks";
+import { registerForPushNotificationsAsync } from "../Notifications";
 
 const Segment = props => {
    let finalStyles = [styles.PSM__Segment];
@@ -38,11 +39,17 @@ class SignUp extends Component {
       }
    }
 
+   async componentDidMount() {
+      let token = await registerForPushNotificationsAsync();
+      this.setState({ pushToken: token });
+   }
+
    constructor(props) {
       super(props);
       this.state = {
          username: "",
          password: "",
+         pushToken: "",
          ready: false,
          passwordInfo: this._evaluateStrength(""),
          status: STATUS.IDLE
@@ -50,9 +57,9 @@ class SignUp extends Component {
    }
 
    _handleSubmit = () => {
-      const { username, password } = this.state;
+      const { username, password, pushToken } = this.state;
       this.setState({ status: STATUS.BUSY });
-      this.props.login(username, password);
+      this.props.signup(username, password, pushToken);
    };
 
    _onChangeText = (text, key) => {

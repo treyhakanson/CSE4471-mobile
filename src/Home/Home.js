@@ -28,11 +28,6 @@ class HomeScreen extends Component {
       };
    };
 
-   async componentWillMount() {
-      let token = await registerForPushNotificationsAsync();
-      // TODO: send this token to the API server
-   }
-
    _onSpeak = site => {
       this.props.navigation.navigate("Speech", { site });
    };

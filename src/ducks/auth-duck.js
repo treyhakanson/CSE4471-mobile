@@ -61,12 +61,13 @@ export function login(username, password) {
    };
 }
 
-export function signup(username, password) {
+export function signup(username, password, pushToken) {
    return function(dispatch) {
       axios
          .post(api.buildURL("signup"), {
             email: username,
-            password
+            password,
+            token: pushToken
          })
          .then(res => {
             if (res.data.outcome === "successful") {
