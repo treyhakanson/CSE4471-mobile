@@ -5,7 +5,7 @@ import { StackNavigator } from "react-navigation";
 
 import { navStyles } from "./constants";
 import store from "./ducks";
-import Login from "./Auth";
+import { Login, SignUp } from "./Auth";
 import Home from "./Home";
 import Speech from "./Speech";
 import Complete from "./Complete";
@@ -14,6 +14,9 @@ const Navigator = StackNavigator(
    {
       Login: {
          screen: Login
+      },
+      SignUp: {
+         screen: SignUp
       },
       Home: {
          screen: Home
@@ -26,7 +29,7 @@ const Navigator = StackNavigator(
       }
    },
    {
-      initialRouteName: "Login",
+      initialRouteName: "SignUp",
       navigationOptions: {
          ...navStyles.primary
       }

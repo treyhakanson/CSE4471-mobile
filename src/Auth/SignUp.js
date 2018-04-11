@@ -10,10 +10,18 @@ import {
 import { connect } from "react-redux";
 import Icon from "react-native-vector-icons/Entypo";
 
-import { colors, api, STATUS } from "../constants";
+import { colors, api, STATUS, COMMON_PASSWORDS } from "../constants";
 import { auth } from "../ducks";
 
-class Login extends Component {
+const Segment = props => {
+   let finalStyles = [styles.PSM__Segment];
+   if (props.active) {
+      finalStyles.push({ backgroundColor: props.activeColor });
+   }
+   return <View style={finalStyles} />;
+};
+
+class SignUp extends Component {
    static navigationOptions = {
       header: null
    };
@@ -21,8 +29,6 @@ class Login extends Component {
    componentWillReceiveProps(nextProps) {
       if (nextProps.auth.error) {
          this.setState({ status: STATUS.ERROR });
-      } else if (nextProps.auth.token) {
-         this.props.navigation.navigate("Home");
       }
    }
 
@@ -32,6 +38,7 @@ class Login extends Component {
          username: "",
          password: "",
          ready: false,
+         passwordInfo: this._evaluateStrength(""),
          status: STATUS.IDLE
       };
    }
@@ -43,18 +50,106 @@ class Login extends Component {
    };
 
    _onChangeText = (text, key) => {
-      const ready =
-         key === "password"
-            ? this.state.username && text
-            : this.state.password && text;
-      this.setState({ [key]: text, ready });
+      let state = { [key]: text };
+      if (key === "password") {
+         state.passwordInfo = this._evaluateStrength(text);
+         state.ready = state.passwordInfo.score >= 3 && !!this.state.username;
+      } else {
+         state.ready = this.state.passwordInfo.score >= 3 && !!text;
+      }
+      this.setState(state);
    };
 
+   _evaluateStrength(password) {
+      let info = { score: 0 };
+      let needs = [];
+
+      if (COMMON_PASSWORDS.has(password)) {
+         info.score = 0;
+         info.text = "Weak Sauce";
+         info.message = "Your password is too common, please be more creative.";
+         return info;
+      }
+
+      info.score += password.length === 8; // check length
+
+      if (password.length > 8) {
+         info.score++;
+      } else {
+         needs.push("length");
+      }
+
+      if (info.score < 1) {
+         info.score = 0;
+         info.text = "Weak Sauce";
+         info.message = "Your password must be at least 8 characters.";
+         return info;
+      }
+
+      if (/\d/.test(password)) {
+         info.score++;
+      } else {
+         needs.push("a digit");
+      }
+
+      if (/[A-Z]/.test(password)) {
+         info.score++;
+      } else {
+         needs.push("a capital");
+      }
+
+      if (/\W/.test(password)) {
+         info.score++;
+      } else {
+         needs.push("a special");
+      }
+
+      let needsStr =
+         needs.length > 1
+            ? `${needs.slice(0, needs.length - 1).join(", ")} or ${
+                 needs[needs.length - 1]
+              }`
+            : needs[0];
+
+      switch (info.score) {
+         case 1:
+            info.text = "Bad";
+            info.message = `Try adding ${needsStr}`;
+            break;
+         case 2:
+            info.text = "Fair";
+            info.message = `Try adding ${needsStr}`;
+            break;
+         case 3:
+            info.text = "Good";
+            info.message = `Not bad! Try adding ${needsStr} for more security.`;
+            break;
+         default:
+            info.text = "Great";
+            info.message = "Great password!";
+            break;
+      }
+
+      return info;
+   }
+
    render() {
+      const { score, text, message } = this.state.passwordInfo;
+      let segments = [
+         <Segment key={1} activeColor={colors.danger} />,
+         <Segment key={2} activeColor={colors.warning} />,
+         <Segment key={3} activeColor={colors.success} />,
+         <Segment key={4} activeColor={colors.primary.default} />
+      ];
+
+      for (let i = 0; i < score; i++) {
+         segments[i] = React.cloneElement(segments[i], { active: true });
+      }
+
       return (
          <View style={styles.L}>
             <View style={styles.L__Inner}>
-               <Text style={styles.Header}>Login</Text>
+               <Text style={styles.Header}>Sign Up</Text>
                <View style={styles.Content}>
                   <View style={[styles.TextInputWrapper, { marginBottom: 10 }]}>
                      <Icon
@@ -97,22 +192,32 @@ class Login extends Component {
                         }
                      />
                   </View>
+                  <View style={styles.PSM}>
+                     <Text style={styles.PSM__HeaderText}>
+                        Password Strength:
+                     </Text>
+                     <View style={styles.PSM__Segments}>{segments}</View>
+                     <Text style={styles.PSM__StrengthText}>{text}</Text>
+                     <Text>{message}</Text>
+                  </View>
                </View>
                <TouchableOpacity
-                  disabled={!this.state.ready}
                   style={[
                      styles.SubmitButton,
                      !this.state.ready && styles.SubmitButtonDisabled
                   ]}
                   onPress={this._handleSubmit}
+                  disabled={!this.state.ready}
                >
                   <Text style={styles.SubmitButtonText}>Submit</Text>
                </TouchableOpacity>
                <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate("SignUp")}
+                  onPress={() => this.props.navigation.navigate("Login")}
                   style={{ alignSelf: "stretch" }}
                >
-                  <Text style={styles.LinkText}>Need an account? Sign up</Text>
+                  <Text style={styles.LinkText}>
+                     Already have an account? Login
+                  </Text>
                </TouchableOpacity>
                {this.state.status === STATUS.ERROR && (
                   <View style={styles.ErrorBlock}>
@@ -134,8 +239,8 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, {
-   login: auth.login
-})(Login);
+   signup: auth.signup
+})(SignUp);
 
 const styles = StyleSheet.create({
    L: {
@@ -196,6 +301,29 @@ const styles = StyleSheet.create({
       color: colors.white,
       paddingVertical: 10,
       textAlign: "center"
+   },
+   PSM: {
+      marginTop: 10
+   },
+   PSM__HeaderText: {
+      fontWeight: "bold",
+      fontSize: 16
+   },
+   PSM__Segments: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginVertical: 8
+   },
+   PSM__Segment: {
+      width: 55,
+      height: 10,
+      borderRadius: 5,
+      backgroundColor: colors.grey.extraLight
+   },
+   PSM__StrengthText: {
+      fontWeight: "bold",
+      marginBottom: 5
    },
    LinkText: {
       color: colors.primary.default,

@@ -11,6 +11,7 @@ const INITIAL_STATE = {
 // actions
 const ACTION = {
    LOGIN: Symbol("AUTH_ACTION/LOGIN"),
+   SIGNUP: Symbol("AUTH_ACTION/SIGNUP"),
    LOGOUT: Symbol("AUTH_ACTION/LOGOUT")
 };
 
@@ -18,6 +19,11 @@ const ACTION = {
 export default function(state = INITIAL_STATE, action = {}) {
    switch (action.type) {
       case ACTION.LOGIN:
+         return {
+            ...state,
+            ...action.payload
+         };
+      case ACTION.SIGNUP:
          return {
             ...state,
             ...action.payload
@@ -44,6 +50,31 @@ export function login(username, password) {
             } else {
                let msg = "Please check your username and password.";
                console.log("LOGIN ERROR OCCURRED:", msg, res);
+               dispatch(handleLogin(null, msg));
+            }
+         })
+         .catch(err => {
+            let msg = "Something went wrong, please try again later.";
+            console.log("LOGIN ERROR OCCURRED:", msg, err);
+            dispatch(handleLogin(null, msg));
+         });
+   };
+}
+
+export function signup(username, password) {
+   return function(dispatch) {
+      axios
+         .post(api.buildURL("signup"), {
+            email: username,
+            password
+         })
+         .then(res => {
+            if (res.data.outcome === "successful") {
+               console.log("SIGN UP SUCCESSFUL.");
+               dispatch(handleLogin(res.data.token));
+            } else {
+               let msg = "Something went wrong, please try again later.";
+               console.log("SIGN UP ERROR OCCURRED:", msg, res);
                dispatch(handleLogin(null, msg));
             }
          })

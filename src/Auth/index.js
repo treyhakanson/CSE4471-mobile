@@ -1,2 +1,2 @@
-import Login from "./Login";
-export default Login;
+export Login from "./Login";
+export SignUp from "./SignUp";
