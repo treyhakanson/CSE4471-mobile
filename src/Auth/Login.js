@@ -153,7 +153,8 @@ const styles = StyleSheet.create({
       backgroundColor: colors.white
    },
    Header: {
-      fontSize: 20
+      fontSize: 20,
+      fontWeight: "bold"
    },
    Content: {
       alignSelf: "stretch",

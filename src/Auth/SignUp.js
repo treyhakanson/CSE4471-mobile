@@ -274,7 +274,8 @@ const styles = StyleSheet.create({
       backgroundColor: colors.white
    },
    Header: {
-      fontSize: 20
+      fontSize: 20,
+      fontWeight: "bold"
    },
    Content: {
       alignSelf: "stretch",
@@ -319,7 +320,8 @@ const styles = StyleSheet.create({
       textAlign: "center"
    },
    PSM: {
-      marginTop: 10
+      marginTop: 20,
+      marginBottom: 10
    },
    PSM__HeaderText: {
       fontWeight: "bold",
