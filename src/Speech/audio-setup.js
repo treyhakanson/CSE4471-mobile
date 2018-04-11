@@ -10,8 +10,8 @@ export default class AudioManager {
       return this._initialized;
    }
 
-   init() {
-      Audio.setAudioModeAsync({
+   async init() {
+      await Audio.setAudioModeAsync({
          allowsRecordingIOS: true,
          playsInSilentModeIOS: true,
          shouldDuckAndroid: true,
@@ -30,23 +30,27 @@ export default class AudioManager {
             numberOfChannels: 1,
             bitRate: 128000
          };
-         await this._recording.prepareToRecordAsync({
-            android: {
-               ...common,
-               extension: ".m4a",
-               outputFormat:
-                  Audio._recording_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-               audioEncoder: Audio._recording_OPTION_ANDROID_AUDIO_ENCODER_AAC
-            },
-            ios: {
-               ...common,
-               extension: ".caf",
-               audioQuality: Audio._recording_OPTION_IOS_AUDIO_QUALITY_MAX,
-               linearPCMBitDepth: 16,
-               linearPCMIsBigEndian: false,
-               linearPCMIsFloat: false
-            }
-         });
+         await this._recording
+            .prepareToRecordAsync({
+               android: {
+                  ...common,
+                  extension: ".aac",
+                  outputFormat:
+                     Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_AAC_ADIF,
+                  audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC
+               },
+               ios: {
+                  ...common,
+                  extension: ".caf", // NOTE: can't change the extension, bug in expo
+                  audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_MAX,
+                  linearPCMBitDepth: 16,
+                  linearPCMIsBigEndian: false,
+                  linearPCMIsFloat: false
+               }
+            })
+            .catch(err => {
+               console.error("ERROR:", err);
+            });
          await this._recording.startAsync();
       } catch (error) {
          console.log(error);

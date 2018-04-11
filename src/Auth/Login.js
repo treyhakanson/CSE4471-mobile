@@ -64,6 +64,9 @@ class Login extends Component {
                         style={styles.TextInput}
                         value={this.state.username}
                         placeholder="Username"
+                        underlineColorAndroid="rgba(0,0,0,0)"
+                        tintColor={colors.primary.default}
+                        selectionColor={colors.primary.faded}
                         onChangeText={text =>
                            this._onChangeText(text, "username")
                         }
@@ -81,6 +84,9 @@ class Login extends Component {
                         style={styles.TextInput}
                         value={this.state.password}
                         placeholder="Password"
+                        underlineColorAndroid="rgba(0,0,0,0)"
+                        tintColor={colors.primary.default}
+                        selectionColor={colors.primary.faded}
                         onChangeText={text =>
                            this._onChangeText(text, "password")
                         }

@@ -22,15 +22,10 @@ export default class SiteList extends Component {
       return (
          <SiteListItem
             item={item}
-            onPress={this._onPress}
             onSpeak={this.props.onSpeak}
             onCancel={this.props.onCancel}
          />
       );
-   };
-
-   _onPress = item => {
-      // TODO: show previous logins and attempts?
    };
 
    render() {

@@ -43,13 +43,13 @@ export function login(username, password) {
                dispatch(handleLogin(res.data.token));
             } else {
                let msg = "Please check your username and password.";
-               console.log("LOGIN ERROR OCCURRED:", msg);
+               console.log("LOGIN ERROR OCCURRED:", msg, res);
                dispatch(handleLogin(null, msg));
             }
          })
          .catch(err => {
             let msg = "Something went wrong, please try again later.";
-            console.log("LOGIN ERROR OCCURRED:", msg);
+            console.log("LOGIN ERROR OCCURRED:", msg, err);
             dispatch(handleLogin(null, msg));
          });
    };

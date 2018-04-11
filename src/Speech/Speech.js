@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { Permissions } from "expo";
 import { connect } from "react-redux";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import EIcon from "react-native-vector-icons/Entypo";
@@ -47,51 +48,76 @@ class Speech extends Component {
       await audioManager.init();
    }
 
+   async componentDidMount() {
+      const { status: existingStatus } = await Permissions.getAsync(
+         Permissions.AUDIO_RECORDING
+      );
+      let finalStatus = existingStatus;
+      console.log("AUDIO STATUS:", existingStatus);
+
+      if (finalStatus !== "granted") {
+         let { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+         finalStatus = status;
+      }
+      console.log("AUDIO STATUS:", finalStatus);
+
+      this.setState({ audioAvailable: finalStatus });
+   }
+
    constructor(props) {
       super(props);
       this.state = {
+         audioAvailable: false,
          playing: false,
          status: STATUS.IDLE
       };
    }
 
    _toggleAudio = async () => {
-      if (!audioManager.isInitialized()) {
+      if (!audioManager.isInitialized() || !this.state.audioAvailable) {
          return;
       }
+
       if (!this.state.playing) {
          await audioManager.begin();
          this.setState({ playing: true });
          return;
       }
-      // TODO: actually send this audio up to the API before sending to the
-      // complete screen
-      this.setState({ status: STATUS.BUSY });
+
       const info = await audioManager.end();
       const success = await this._handleAudioUpload(info);
+      let status = STATUS.ERROR;
+      this.setState({ status: STATUS.BUSY });
+
       if (success) {
-         this.setState({ status: STATUS.SUCCESS, playing: false });
+         status = STATUS.SUCCESS;
          let updatedSite = { ...this.props.navigation.state.params.site };
          delete updatedSite.actionDate;
          this.props.updateOneSite(updatedSite);
-         this.props.navigation.navigate("Complete", { success: true });
-      } else {
-         this.setState({ status: STATUS.ERROR, playing: false });
       }
+
+      this.setState({ status, playing: false });
+      this.props.navigation.navigate("Complete", { success });
    };
 
    _getInfoText() {
       const { playing, status } = this.state;
+
+      if (!this.state.audioAvailable) {
+         return "You must enable recording privleges to speak a passphrase.";
+      }
+
       if (playing) {
          return "Tap the microphone again to finish speaking.";
       }
+
       switch (status) {
          case STATUS.BUSY:
-            return "Tap the microphone to begin speaking.";
+            return "Uploading passphrase for analysis...";
          case STATUS.ERROR:
             return "An error occurred. Please try again later.";
          default:
-            return "Uploading passphrase for analysis...";
+            return "Tap the microphone to begin speaking.";
       }
    }
 
@@ -102,8 +128,10 @@ class Speech extends Component {
          name: "audio.caf",
          type: "audio/x-caf"
       };
+
       formData.append("token", this.props.auth.token);
-      formData.append("file", audioFile);
+      formData.append("audio", audioFile);
+
       let res = await axios({
          url: api.buildURL("submit-phrase-audio"),
          method: "POST",
@@ -115,6 +143,7 @@ class Speech extends Component {
       }).catch(err => {
          this.setState({ status: STATUS.ERROR });
       });
+
       res = res || {};
       return res.data && res.data.outcome === "successful";
    }
@@ -139,7 +168,11 @@ class Speech extends Component {
          default:
             IconComponent = EIcon;
             iconName = "mic";
-            iconStyles.push(styles.S__MicIcon);
+            iconStyles.push(
+               this.state.audioAvailable
+                  ? styles.S__MicIcon
+                  : styles.S__BusyIcon
+            );
             iconOnPress = this._toggleAudio;
             break;
       }
