@@ -1,3 +1,5 @@
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 import axios from "axios";
 
 import { api } from "../constants";
@@ -16,7 +18,7 @@ const ACTION = {
 };
 
 // reducer
-export default function(state = INITIAL_STATE, action = {}) {
+function reducer(state = INITIAL_STATE, action = {}) {
    switch (action.type) {
       case ACTION.LOGIN:
          return {
@@ -34,6 +36,14 @@ export default function(state = INITIAL_STATE, action = {}) {
          return { ...state };
    }
 }
+
+export default persistReducer(
+   {
+      key: "auth",
+      storage
+   },
+   reducer
+);
 
 // action creators
 export function login(username, password) {

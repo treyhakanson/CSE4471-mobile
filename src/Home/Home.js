@@ -6,27 +6,39 @@ import Icon from "react-native-vector-icons/Entypo";
 
 import { registerForPushNotificationsAsync } from "../Notifications";
 import { colors, navStyles } from "../constants";
-import { site } from "../ducks";
+import { site, auth } from "../ducks";
 import SiteList from "./SiteList";
 
-const AddSiteButton = () => (
-   <TouchableOpacity style={{ marginRight: navStyles.buttonMargin }}>
-      <Icon
-         name="circle-with-plus"
-         color={colors.white}
-         size={navStyles.buttonSize}
-      />
+const LogoutButton = props => (
+   <TouchableOpacity
+      style={{ marginRight: navStyles.buttonMargin }}
+      onPress={props.onPress}
+   >
+      <Icon name="log-out" color={colors.white} size={navStyles.buttonSize} />
    </TouchableOpacity>
 );
 
 class HomeScreen extends Component {
-   static navigationOptions = ({ navigation, navigationOptions }) => {
+   static navigationOptions = ({ navigation }) => {
       return {
          title: "Home",
-         headerLeft: null
-         // headerRight: <AddSiteButton />
+         headerLeft: null,
+         headerRight: (
+            <LogoutButton
+               onPress={() => {
+                  navigation.state.params.logout();
+                  navigation.navigate("Login");
+               }}
+            />
+         )
       };
    };
+
+   componentDidMount() {
+      this.props.navigation.setParams({
+         logout: this.props.logout
+      });
+   }
 
    _onSpeak = site => {
       this.props.navigation.navigate("Speech", { site });
@@ -60,7 +72,8 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, {
-   updateOneSite: site.updateOne
+   updateOneSite: site.updateOne,
+   logout: auth.logout
 })(HomeScreen);
 
 const styles = StyleSheet.create({

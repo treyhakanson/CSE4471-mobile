@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 import { StackNavigator } from "react-navigation";
 
 import { navStyles } from "./constants";
-import store from "./ducks";
+import { store, persistor } from "./ducks";
 import { Login, SignUp } from "./Auth";
 import Home from "./Home";
 import Speech from "./Speech";
@@ -36,10 +37,14 @@ const Navigator = StackNavigator(
    }
 );
 
-const ApplicationWrapper = () => (
-   <Provider store={store}>
-      <Navigator />
-   </Provider>
-);
-
-export default ApplicationWrapper;
+export default class ApplicationWrapper extends Component {
+   render() {
+      return (
+         <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+               <Navigator />
+            </PersistGate>
+         </Provider>
+      );
+   }
+}
