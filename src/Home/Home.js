@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { StyleSheet, View, StatusBar, TouchableOpacity } from "react-native";
+import { Notifications } from "expo";
 import Icon from "react-native-vector-icons/Entypo";
 
 import { registerForPushNotificationsAsync } from "../Notifications";
@@ -38,6 +39,13 @@ class HomeScreen extends Component {
       this.props.navigation.setParams({
          logout: this.props.logout
       });
+      this._notificationSubscription = Notifications.addListener(
+         this._handleNotification
+      );
+   }
+
+   _handleNotification(notification) {
+      console.log("NOTIFICATION RECEIVED:", notification.data);
    }
 
    _onSpeak = site => {

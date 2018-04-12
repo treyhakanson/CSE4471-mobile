@@ -39,13 +39,6 @@ class SignUp extends Component {
       }
    }
 
-   componentWillMount() {
-      if (this.props.auth.token) {
-         console.log("ALREADY HAS AUTH TOKEN:", this.props.auth.token);
-         this.props.navigation.navigate("Home");
-      }
-   }
-
    async componentDidMount() {
       let token = await registerForPushNotificationsAsync();
       this.setState({ pushToken: token });

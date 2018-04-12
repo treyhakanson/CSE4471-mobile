@@ -1,5 +1,5 @@
-// export const API_BASE_URL = "http://localhost:5000";
-export const API_BASE_URL = "http://624f97e1.ngrok.io";
+export const API_BASE_URL = "http://localhost:5000";
+// export const API_BASE_URL = "http://624f97e1.ngrok.io";
 
 export function buildURL(route, data) {
    let url =

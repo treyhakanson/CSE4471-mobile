@@ -11,7 +11,7 @@ import Home from "./Home";
 import Speech from "./Speech";
 import Complete from "./Complete";
 
-const Navigator = StackNavigator(
+let navigationConfig = [
    {
       Login: {
          screen: Login
@@ -35,14 +35,20 @@ const Navigator = StackNavigator(
          ...navStyles.primary
       }
    }
-);
+];
 
 export default class ApplicationWrapper extends Component {
    render() {
       return (
          <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-               <Navigator />
+               {() => {
+                  if (store.getState().auth.token) {
+                     navigationConfig[1].initialRouteName = "Home";
+                  }
+                  const Navigator = StackNavigator(...navigationConfig);
+                  return <Navigator />;
+               }}
             </PersistGate>
          </Provider>
       );
