@@ -42,7 +42,7 @@ export default class SiteListItem extends Component {
                <Text style={styles.SLI__TitleText}>{item.title}</Text>
                {item.actionDate && (
                   <View style={styles.SLI__InfoAction}>
-                     <EIcon name="warning" color={colors.warning} size={14} />
+                     <EIcon name="clock" color={colors.grey.medium} size={16} />
                      <View style={styles.SLI__InfoActionText}>
                         <Text style={styles.InfoAction__Main}>
                            Action Requested
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
    },
    SLI__TitleText: {
       fontWeight: "bold",
-      fontSize: 20
+      fontSize: 16
    },
    SLI__InfoAction: {
       marginTop: 8,

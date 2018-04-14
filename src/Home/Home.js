@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { StyleSheet, View, StatusBar, TouchableOpacity } from "react-native";
 import { Notifications } from "expo";
+import moment from "moment";
 import Icon from "react-native-vector-icons/Entypo";
 
-import { registerForPushNotificationsAsync } from "../Notifications";
 import { colors, navStyles } from "../constants";
 import { site, auth } from "../ducks";
 import SiteList from "./SiteList";
@@ -44,8 +44,15 @@ class HomeScreen extends Component {
       );
    }
 
-   _handleNotification(notification) {
-      console.log("NOTIFICATION RECEIVED:", notification.data);
+   componentWillUnmount() {
+      this._notificationSubscription.remove();
+   }
+
+   _handleNotification = notification => {
+      let site = notification.data;
+      site.actionDate = moment(site.actionDate);
+      console.log(site);
+      this.props.addOne(site);
    }
 
    _onSpeak = site => {
@@ -81,6 +88,7 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, {
    updateOneSite: site.updateOne,
+   addOne: site.addOne,
    logout: auth.logout
 })(HomeScreen);
 
