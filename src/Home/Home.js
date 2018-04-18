@@ -60,7 +60,7 @@ class HomeScreen extends Component {
    };
 
    _onCancel = site => {
-      // TODO: update status with call to API
+      // In future, would update status API side with call
       let updatedSite = { ...site };
       delete updatedSite.actionDate;
       this.props.updateOneSite(updatedSite);
